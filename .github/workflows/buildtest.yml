@@ -2,12 +2,12 @@ name: LucideC++ Build Test
 
 on:
   push:
-    branches: 
-      - '**'       # ทุก branch
+    branches:
+      - '**'   # ทุก branch
   pull_request:
     branches:
-      - '**'       # ทุก branch
-  workflow_dispatch:   # manual run จากหน้า Actions
+      - '**'
+  workflow_dispatch:   # กดรันเองได้จากหน้า Actions
 
 jobs:
   build:
@@ -57,13 +57,14 @@ jobs:
 
     - name: Configure CMake (Windows)
       if: ${{ matrix.os == 'windows-latest' }}
+      shell: cmd
       run: |
         mkdir build
         cd build
-        cmake -DCMAKE_BUILD_TYPE=${{ matrix.build_type }} `
-              -DBUILD_SHARED_LIBS=ON `
-              -DBUILD_EXAMPLES=ON `
-              -G "${{ matrix.cmake_generator }}" `
+        cmake -DCMAKE_BUILD_TYPE=${{ matrix.build_type }} ^
+              -DBUILD_SHARED_LIBS=ON ^
+              -DBUILD_EXAMPLES=ON ^
+              -G "${{ matrix.cmake_generator }}" ^
               ..
 
     - name: Build project
@@ -76,9 +77,7 @@ jobs:
       run: |
         cd build
         ls -la
-        # Check if shared library was created
         find . -name "*.so" -o -name "*.dylib" | head -5
-        # Check if example executable was created
         find . -name "lucide-example" -executable
 
     - name: Test library files (Windows)
@@ -86,13 +85,11 @@ jobs:
       run: |
         cd build
         dir
-        # Check if DLL was created
         Get-ChildItem -Recurse -Filter "*.dll" | Select-Object -First 5
-        # Check if example executable was created
         Get-ChildItem -Recurse -Filter "lucide-example.exe"
 
     - name: Upload build artifacts
-      uses: actions/upload-artifact@v4   # เปลี่ยนจาก v3 → v4
+      uses: actions/upload-artifact@v4   # อัปเดตเป็น v4
       with:
         name: build-artifacts-${{ matrix.os }}-${{ matrix.build_type }}
         path: |
@@ -103,7 +100,6 @@ jobs:
           build/**/*.a
           build/**/lucide-example*
         retention-days: 7
-
 
   test-integration:
     name: Integration Test
