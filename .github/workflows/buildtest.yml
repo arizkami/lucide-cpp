@@ -2,13 +2,16 @@ name: LucideC++ Build Test
 
 on:
   push:
-    branches: [ main, develop ]
+    branches: 
+      - '**'       # ทุก branch
   pull_request:
-    branches: [ main, develop ]
+    branches:
+      - '**'       # ทุก branch
+  workflow_dispatch:   # manual run จากหน้า Actions
 
 jobs:
   build:
-    name: Build on ${{ matrix.os }}
+    name: Build on ${{ matrix.os }} - ${{ matrix.build_type }}
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
@@ -32,17 +35,17 @@ jobs:
         python-version: '3.x'
 
     - name: Install CMake (Ubuntu)
-      if: matrix.os == 'ubuntu-latest'
+      if: ${{ matrix.os == 'ubuntu-latest' }}
       run: |
         sudo apt-get update
         sudo apt-get install -y cmake build-essential
 
     - name: Install CMake (Windows)
-      if: matrix.os == 'windows-latest'
+      if: ${{ matrix.os == 'windows-latest' }}
       uses: lukka/get-cmake@latest
 
     - name: Configure CMake (Ubuntu)
-      if: matrix.os == 'ubuntu-latest'
+      if: ${{ matrix.os == 'ubuntu-latest' }}
       run: |
         mkdir build
         cd build
@@ -53,7 +56,7 @@ jobs:
               ..
 
     - name: Configure CMake (Windows)
-      if: matrix.os == 'windows-latest'
+      if: ${{ matrix.os == 'windows-latest' }}
       run: |
         mkdir build
         cd build
@@ -69,7 +72,7 @@ jobs:
         cmake --build . --config ${{ matrix.build_type }}
 
     - name: Test library files (Ubuntu)
-      if: matrix.os == 'ubuntu-latest'
+      if: ${{ matrix.os == 'ubuntu-latest' }}
       run: |
         cd build
         ls -la
@@ -79,7 +82,7 @@ jobs:
         find . -name "lucide-example" -executable
 
     - name: Test library files (Windows)
-      if: matrix.os == 'windows-latest'
+      if: ${{ matrix.os == 'windows-latest' }}
       run: |
         cd build
         dir
