@@ -92,7 +92,7 @@ jobs:
         Get-ChildItem -Recurse -Filter "lucide-example.exe"
 
     - name: Upload build artifacts
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4   # เปลี่ยนจาก v3 → v4
       with:
         name: build-artifacts-${{ matrix.os }}-${{ matrix.build_type }}
         path: |
@@ -103,6 +103,7 @@ jobs:
           build/**/*.a
           build/**/lucide-example*
         retention-days: 7
+
 
   test-integration:
     name: Integration Test
